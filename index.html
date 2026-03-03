@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <!-- Google Analytics -->
-        <script src="./assets/js/google-analytics.js"></script>
+        <!-- Elastic RUM Agent -->
+        <script src="https://unpkg.com/@elastic/apm-rum@5.12.0/dist/bundles/elastic-apm-rum.umd.min.js"></script>
+        <script>
+            elasticApm.init({
+                serviceName: 'rotom-dex-portfolio',
+                serverUrl: 'https://your-rotom-dex.netlify.app/.netlify/functions/apm-proxy',
+                serviceVersion: '1.0.0',
+                environment: 'production'
+            })
+        </script>
 
         <!-- Placed at the start 'coz DOM is awesome -->
         <!-- Bootstrap core JavaScript -->
