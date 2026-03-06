@@ -17,11 +17,6 @@
 
 			if (transactionId) {
 				console.log(`transactionId: ${transactionId}`);
-				fetch(
-					`https://rotom-dex.rotom-dex.workers.dev/api/transaction/${transactionId}`,
-				)
-					.then((r) => r.json())
-					.then((data) => console.log('Your visit:', data));
 			}
 		</script>
 
