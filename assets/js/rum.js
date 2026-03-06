@@ -418,7 +418,7 @@ const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
 function updateUI() {
   const now = new Date();
   // Local time
-  const localTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const localTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const localDate = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   const tzShort = now.toLocaleTimeString([], { timeZoneName: 'short' }).split(' ').pop();
   document.getElementById('local-time').textContent = localTime;
@@ -426,7 +426,7 @@ function updateUI() {
   document.getElementById('tz-name').textContent = `${tzName} (${tzShort})`;
   // UTC
   const utcStr = now.toUTCString(); // e.g. "Thu, 05 Mar 2026 09:30:54 GMT"
-  const utcTime = utcStr.slice(17, 25);
+  const utcTime = utcStr.slice(17, 22);
   document.getElementById('utcv').textContent = 'UTC: ' + utcTime;
   // Solar
   const s = sunSubsolar(now);
