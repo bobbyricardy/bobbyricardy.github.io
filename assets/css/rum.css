@@ -1,0 +1,542 @@
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #e2e8f0
+    }
+
+    #gl {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block
+    }
+
+    /* ── Overlay shell ── */
+    #ov {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto auto 1fr auto;
+      grid-template-areas: "clk hdr ." "loc . ." "sol . ." ". . ." "fp fp leg";
+      padding: 16px;
+      gap: 10px;
+      text-align: center
+    }
+
+    /* ── Header ── */
+    #hdr {
+      grid-area: hdr;
+      justify-self: center;
+      align-self: start;
+      text-align: center;
+      pointer-events: none;
+      width: 100%;
+      max-width: 700px
+    }
+
+    #hdr h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      white-space: nowrap
+    }
+
+    #hdr .sub {
+      font-size: .62rem;
+      color: rgba(148, 163, 184, .7);
+      margin-top: 2px;
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    /* ── Corner cards ── */
+    .card {
+      background: rgba(8, 14, 30, .9);
+      border-radius: 12px;
+      padding: 10px 14px;
+      pointer-events: none;
+      font-size: .72rem;
+      height: fit-content;
+      backdrop-filter: blur(18px)
+    }
+
+    #loc {
+      grid-area: loc;
+      border: 1px solid rgba(96, 165, 250, .3);
+      min-width: 168px
+    }
+
+    #sol {
+      grid-area: sol;
+      border: 1px solid rgba(251, 191, 36, .3);
+      min-width: 210px
+    }
+
+    #leg {
+      grid-area: leg;
+      align-self: end;
+      border: 1px solid rgba(99, 102, 241, .25);
+      min-width: 150px
+    }
+
+    #clk {
+      grid-area: clk;
+      align-self: start;
+      border: 1px solid rgba(99, 102, 241, .2)
+    }
+
+    .clabel {
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: #475569;
+      margin-bottom: 2px
+    }
+
+    .cval {
+      font-weight: 600;
+      font-size: .86rem;
+      margin-top: 1px
+    }
+
+    .csub {
+      font-size: .68rem;
+      color: #94a3b8;
+      margin-top: 2px;
+      font-family: monospace
+    }
+
+    .ctz {
+      font-size: .62rem;
+      color: #60a5fa;
+      margin-top: 1px
+    }
+
+    .leg-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 5px;
+      color: #94a3b8;
+      font-size: .68rem
+    }
+
+    .leg-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    /* ── Flow panel ── */
+    #fp {
+      grid-area: fp;
+      align-self: end;
+      justify-self: center;
+      width: 100%;
+      max-width: 1400px;
+      background: rgba(6, 10, 22, .87);
+      border: 1px solid rgba(99, 102, 241, .22);
+      border-radius: 14px;
+      backdrop-filter: blur(22px);
+      padding: 12px 16px 10px;
+      pointer-events: auto
+    }
+
+    #fp .pt {
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+      color: #3a4a65;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px
+    }
+
+    #fp .pt::before,
+    #fp .pt::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(99, 102, 241, .22))
+    }
+
+    #fp .pt::after {
+      background: linear-gradient(to right, rgba(99, 102, 241, .22), transparent)
+    }
+
+    /* ── Graph wrap ── */
+    #gw {
+      position: relative;
+      width: 100%
+    }
+
+    #gsvg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 0
+    }
+
+    #gcan {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0
+    }
+
+    /* ── Node grid ── */
+    #nodegrid {
+      display: grid;
+      width: 100%;
+      position: relative;
+      z-index: 1
+    }
+
+    /* Desktop: 7-column left-to-right pipeline */
+    @media (min-width:769px) {
+      #nodegrid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px 6px;
+        padding: 6px 0 10px;
+        align-items: center;
+        justify-items: center
+      }
+    }
+
+    /* ── Nodes ── */
+    .fn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      pointer-events: auto;
+      user-select: none
+    }
+
+    .ni {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid transparent;
+      transition: transform .15s, box-shadow .15s;
+      font-size: 18px
+    }
+
+    .fn:hover .ni {
+      transform: scale(1.15);
+      box-shadow: 0 0 14px currentColor
+    }
+
+    .ni.browser {
+      background: rgba(26, 115, 232, .18);
+      border-color: rgba(26, 115, 232, .55);
+      color: #1a73e8
+    }
+
+    .ni.dns {
+      background: rgba(139, 92, 246, .18);
+      border-color: rgba(139, 92, 246, .55);
+      color: #a78bfa
+    }
+
+    .ni.tcp {
+      background: rgba(99, 102, 241, .18);
+      border-color: rgba(99, 102, 241, .55);
+      color: #818cf8
+    }
+
+    .ni.doc {
+      background: rgba(59, 130, 246, .18);
+      border-color: rgba(59, 130, 246, .55);
+      color: #60a5fa
+    }
+
+    .ni.parse {
+      background: rgba(16, 185, 129, .18);
+      border-color: rgba(16, 185, 129, .55);
+      color: #34d399
+    }
+
+    .ni.fast {
+      background: rgba(251, 191, 36, .18);
+      border-color: rgba(251, 191, 36, .55);
+      color: #fbbf24
+    }
+
+    .ni.slow {
+      background: rgba(249, 115, 22, .18);
+      border-color: rgba(249, 115, 22, .55);
+      color: #fb923c
+    }
+
+    .ni.github {
+      background: rgba(248, 250, 252, .08);
+      border-color: rgba(248, 250, 252, .35);
+      color: #f8fafc
+    }
+
+    .ni.font {
+      background: rgba(244, 63, 94, .18);
+      border-color: rgba(244, 63, 94, .55);
+      color: #fb7185
+    }
+
+    .ntop {
+      margin-top: 4px;
+      font-size: .6rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-align: center;
+      max-width: 80px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    /* sublabel only shown for nav nodes */
+    .nlbl {
+      margin-top: 2px;
+      font-size: .57rem;
+      color: #64748b;
+      text-align: center;
+      max-width: 80px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .ndur {
+      margin-top: 3px;
+      font-size: .6rem;
+      font-family: monospace;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px
+    }
+
+    .df {
+      background: rgba(52, 211, 153, .15);
+      color: #34d399
+    }
+
+    .dm {
+      background: rgba(251, 191, 36, .15);
+      color: #fbbf24
+    }
+
+    .ds {
+      background: rgba(251, 113, 133, .15);
+      color: #fb7185
+    }
+
+    /* ── Tooltip ── */
+    #tt {
+      position: fixed;
+      background: rgba(6, 10, 22, .97);
+      border: 1px solid rgba(99, 102, 241, .4);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .72rem;
+      pointer-events: none;
+      z-index: 200;
+      display: none;
+      max-width: 280px;
+      backdrop-filter: blur(14px)
+    }
+
+    #tt .tn {
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+      font-size: .78rem
+    }
+
+    #tt .tr {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #64748b;
+      margin-top: 3px
+    }
+
+    #tt .tr span:last-child {
+      color: #cbd5e1;
+      font-family: monospace;
+      text-align: right
+    }
+
+    /* ── Timeline axis ── */
+    #axis {
+      position: relative;
+      height: 12px;
+      margin-top: 4px;
+      font-size: .56rem;
+      font-family: monospace;
+      color: #2d3d55
+    }
+
+    /* ═══════════════════════════════
+   MOBILE  ≤ 768px
+═══════════════════════════════ */
+    @media (max-width:768px) {
+      #ov {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto auto 1fr auto;
+        grid-template-areas: "clk" "sol" "hdr" "leg" "loc" "." "fp";
+        padding: 8px;
+        gap: 8px
+      }
+
+      #hdr h1 {
+        font-size: .78rem;
+        letter-spacing: .05em;
+        white-space: normal
+      }
+
+      #hdr .sub {
+        display: block;
+        white-space: normal;
+        font-size: .55rem
+      }
+
+      #leg {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        gap: 10px
+      }
+
+      #leg .clabel {
+        flex-basis: 100%
+      }
+
+      /* clock: compact top-left */
+      #clk {
+        padding: 6px 9px;
+        border-radius: 9px
+      }
+
+      #clk #tz-lbl {
+        display: none
+      }
+
+      /* hide date line */
+      #clk #tz-name {
+        display: none
+      }
+
+      #clk #local-time {
+        font-size: .82rem
+      }
+
+      #clk #utcv {
+        font-size: .6rem
+      }
+
+      /* location: hide entirely on mobile (shown in solar card) */
+      #loc {
+        display: block;
+        width: 100%
+      }
+
+      /* solar: compact top-right, no bottom positioning */
+      #sol {
+        min-width: 0;
+        padding: 6px 9px;
+        border-radius: 9px;
+        font-size: .65rem
+      }
+
+      #sol .clabel {
+        display: none
+      }
+
+      #sol #slat,
+      #sol #slon {
+        font-size: .68rem;
+        margin-top: 0
+      }
+
+      /* flow panel: fixed bottom sheet, takes 40% of screen, scrollable */
+      #fp {
+        max-height: 40vh;
+        overflow-y: auto;
+        border-radius: 14px 14px 0 0;
+        padding: 10px 10px 16px;
+        margin-bottom: -8px
+      }
+
+      #fp .pt {
+        font-size: .55rem;
+        margin-bottom: 6px
+      }
+
+      /* hide SVG edges + canvas + axis on mobile */
+      #gsvg,
+      #gcan,
+      #axis {
+        display: none
+      }
+
+      /* mobile node grid: 2-col stacked cards */
+      #nodegrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 7px;
+        padding: 4px 0 6px
+      }
+
+      /* give each node a card shell on mobile */
+      .fn {
+        background: rgba(15, 22, 42, .9);
+        border-radius: 9px;
+        border: 1px solid rgba(99, 102, 241, .2);
+        padding: 10px 8px 8px;
+        width: 100%
+      }
+    }
+
+    /* Tablet: 3-column node grid */
+    @media (min-width:480px) and (max-width:768px) {
+      #nodegrid {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
