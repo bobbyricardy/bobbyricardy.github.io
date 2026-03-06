@@ -12,6 +12,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a static personal portfolio website hosted on GitHub Pages at `bobbyricardy.github.io`. There is no build system, package manager, or test suite — all files are served directly as static assets.
 
+## Commands
+
+```bash
+npm install          # install dev dependencies (Prettier)
+npm run pretty       # check formatting
+npm run pretty:write # auto-format all files
+```
+Prettier ignores `assets/` and `*.min.*` files (see `.prettierignore`).
+
 ## Deployment
 
 Pushing to the `master` branch triggers automatic GitHub Pages deployment. The site uses a custom domain (`bobbyricardy.dev`). The `rum-alpha` branch is used for developing RUM features before merging to `master`.
