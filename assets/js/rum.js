@@ -430,8 +430,6 @@ function updateUI() {
   document.getElementById('utcv').textContent = 'UTC: ' + utcTime;
   // Solar
   const s = sunSubsolar(now);
-  document.getElementById('slat').textContent = `Sub-solar lat: ${s.lat >= 0 ? '+' : ''}${s.lat.toFixed(3)}°`;
-  document.getElementById('slon').textContent = `Sub-solar lon: ${s.lon >= 0 ? '+' : ''}${s.lon.toFixed(3)}°`;
   sunU.value.copy(ll2v(s.lat, s.lon));
 }
 
