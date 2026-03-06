@@ -1,0 +1,24 @@
+{
+	"name": "bobbyricardy.github.io",
+	"version": "1.0.0",
+	"description": "Hi. Welcome to my website's github page! Feel free to fork or download the source code as reference. Feel free to contact me at [bobbyricardy@gmail.com](mailto:bobbyricardy@gmail.com) to ask any questions regarding the JavaScript I've used on the website.",
+	"homepage": "https://github.com/bobbyricardy/bobbyricardy.github.io#readme",
+	"bugs": {
+		"url": "https://github.com/bobbyricardy/bobbyricardy.github.io/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bobbyricardy/bobbyricardy.github.io.git"
+	},
+	"license": "ISC",
+	"author": "",
+	"type": "commonjs",
+	"main": "index.js",
+	"scripts": {
+		"pretty": "prettier --check ./",
+		"pretty:write": "prettier --write ./"
+	},
+	"devDependencies": {
+		"prettier": "3.8.1"
+	}
+}

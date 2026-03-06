@@ -1,80 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>RUM Tracker — 3D Trace View</title>
+		<link rel="stylesheet" href="assets/css/rum.css" />
+	</head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RUM Tracker — 3D Trace View</title>
-  <link rel="stylesheet" href="assets/css/rum.css">
-</head>
+	<body>
+		<canvas id="gl"></canvas>
 
-<body>
-  <canvas id="gl"></canvas>
+		<div id="ov">
+			<!-- Clock: local + UTC -->
+			<div id="clk" class="card">
+				<div class="clabel" id="tz-lbl">Local time</div>
+				<div
+					style="
+						font-size: 0.95rem;
+						font-weight: 700;
+						color: #e2e8f0;
+						font-family: monospace;
+					"
+					id="local-time"
+				>
+					—
+				</div>
+				<div class="ctz" id="tz-name"></div>
+				<div class="csub" id="utcv">UTC —</div>
+			</div>
 
-  <div id="ov">
-    <!-- Clock: local + UTC -->
-    <div id="clk" class="card">
-      <div class="clabel" id="tz-lbl">Local time</div>
-      <div style="font-size:.95rem;font-weight:700;color:#e2e8f0;font-family:monospace" id="local-time">—</div>
-      <div class="ctz" id="tz-name"></div>
-      <div class="csub" id="utcv">UTC —</div>
-    </div>
+			<div id="hdr">
+				<h1>Real User Monitoring — 3D Trace View</h1>
+				<div class="sub">
+					Service: rotom-dex-portfolio &nbsp;|&nbsp; Trace: 6c9fd138…
+					&nbsp;|&nbsp; Agent: js-base 4.8.1 &nbsp;|&nbsp; Elastic APM 7.17.0
+				</div>
+			</div>
 
-    <div id="hdr">
-      <h1>Real User Monitoring — 3D Trace View</h1>
-      <div class="sub">Service: rotom-dex-portfolio &nbsp;|&nbsp; Trace: 6c9fd138… &nbsp;|&nbsp; Agent: js-base 4.8.1
-        &nbsp;|&nbsp; Elastic APM 7.17.0</div>
-    </div>
+			<div id="leg" class="card">
+				<div class="clabel">Response time</div>
+				<div class="leg-row">
+					<div class="leg-dot" style="background: #34d399"></div>
+					&lt; 50 ms — Fast
+				</div>
+				<div class="leg-row">
+					<div class="leg-dot" style="background: #fbbf24"></div>
+					50–200 ms
+				</div>
+				<div class="leg-row">
+					<div class="leg-dot" style="background: #fb7185"></div>
+					&gt; 200 ms — Slow
+				</div>
+				<div style="margin-top: 9px" class="clabel">Flow particles</div>
+				<div
+					class="leg-row"
+					style="
+						font-size: 0.62rem;
+						color: #3a4a65;
+						max-width: 138px;
+						white-space: normal;
+						line-height: 1.4;
+					"
+				>
+					More = longer. Slower speed = slower response.
+				</div>
+			</div>
 
-    <div id="leg" class="card">
-      <div class="clabel">Response time</div>
-      <div class="leg-row">
-        <div class="leg-dot" style="background:#34d399"></div>&lt; 50 ms — Fast
-      </div>
-      <div class="leg-row">
-        <div class="leg-dot" style="background:#fbbf24"></div>50–200 ms
-      </div>
-      <div class="leg-row">
-        <div class="leg-dot" style="background:#fb7185"></div>&gt; 200 ms — Slow
-      </div>
-      <div style="margin-top:9px" class="clabel">Flow particles</div>
-      <div class="leg-row" style="font-size:.62rem;color:#3a4a65;max-width:138px;white-space:normal;line-height:1.4">
-        More = longer. Slower speed = slower response.
-      </div>
-    </div>
+			<div id="sol" class="card">
+				<div class="clabel">☀ Solar (real-time ephemeris)</div>
+				<div class="cval" id="slat" style="color: #fbbf24">—</div>
+				<div class="cval" id="slon" style="color: #fb923c; margin-top: 2px">
+					—
+				</div>
+			</div>
 
-    <div id="sol" class="card">
-      <div class="clabel">☀ Solar (real-time ephemeris)</div>
-      <div class="cval" id="slat" style="color:#fbbf24">—</div>
-      <div class="cval" id="slon" style="color:#fb923c;margin-top:2px">—</div>
-    </div>
+			<div id="loc" class="card">
+				<div class="clabel">Client location</div>
+				<div class="cval">📍 Singapore, SG</div>
+				<div class="csub">49.245.121.88</div>
+				<div class="csub" style="color: #475569">1.2939° N, 103.8461° E</div>
+			</div>
 
-    <div id="loc" class="card">
-      <div class="clabel">Client location</div>
-      <div class="cval">📍 Singapore, SG</div>
-      <div class="csub">49.245.121.88</div>
-      <div class="csub" style="color:#475569">1.2939° N, 103.8461° E</div>
-    </div>
+			<!-- Flow graph panel -->
+			<div id="fp">
+				<div class="pt">
+					Network waterfall — page-load trace (Singapore →
+					bobbyricardy.github.io)
+				</div>
 
-    <!-- Flow graph panel -->
-    <div id="fp">
-      <div class="pt">Network waterfall — page-load trace (Singapore → bobbyricardy.github.io)</div>
+				<div id="gw">
+					<svg id="gsvg" xmlns="http://www.w3.org/2000/svg"></svg>
+					<canvas id="gcan"></canvas>
+					<div id="nodegrid"></div>
+				</div>
+				<div id="axis"></div>
+			</div>
+		</div>
 
-      <div id="gw">
-        <svg id="gsvg" xmlns="http://www.w3.org/2000/svg"></svg>
-        <canvas id="gcan"></canvas>
-        <div id="nodegrid"></div>
-      </div>
-      <div id="axis"></div>
-    </div>
-  </div>
+		<div id="tt"></div>
 
-  <div id="tt"></div>
-
-  <script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"}}
-</script>
-  <script type="module" src="assets/js/rum.js"></script>
-</body>
-
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+					"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+				}
+			}
+		</script>
+		<script type="module" src="assets/js/rum.js"></script>
+	</body>
 </html>
