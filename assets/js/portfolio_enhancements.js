@@ -1,133 +1,119 @@
-// Footer Automatic Year
-$(document).ready(function() {
-    var date = new Date();
-    var year = date.getFullYear();
-    
-    if (year != 2017) {
-        var currentYear = date.getFullYear().toString();
-        var totalYear = "2017" + " - " + currentYear.toString();
-        document.getElementById("yearSoFar").innerHTML = totalYear;
-    } else {
-        document.getElementById("yearSoFar").innerHTML = year;
-    }
-    
-    var myAge = year - 1990;
-    $('age').html(myAge);
-});
+// ─── Footer Year ──────────────────────────────────────────────────────────────
+const updateFooterYear = () => {
+    const year = new Date().getFullYear();
+    document.getElementById('yearSoFar').innerHTML = year === 2017 ? `${year}` : `2017 - ${year}`;
 
-// Typing Animation - Title
-document.addEventListener('DOMContentLoaded', function(){
+    const ageEl = document.querySelector('age');
+    if (ageEl) ageEl.textContent = year - 1990;
+};
+
+// ─── Typing Animation ─────────────────────────────────────────────────────────
+const initTyped = () => {
     Typed.new('.masthead-brand', {
-        strings: ['testing123', 'Bobby', 'Bob Ricardy <i id="peace" class="fa fa-hand-peace-o fa-lg"></i>'],
+        strings: [
+            'testing123',
+            'Bobby',
+            'Bob Ricardy <i id="peace" class="fa fa-hand-peace-o fa-lg"></i>',
+        ],
         backDelay: 500,
         backSpeed: 200,
         startDelay: 1000,
         typeSpeed: 100,
-        cursorChar: "",
-        contentType: 'html'
+        cursorChar: '',
+        contentType: 'html',
     });
-});
-
-function changeBorderAboutMe() {
-    $("#borderAboutMe").fadeOut(400);
-    $("#borderAboutMe").fadeIn(400);
-}
-
-function changeBorderContactMe() {
-    $("#contact").fadeOut(400);
-    $("#contact").fadeIn(400);
-}
-
-// Resume Animation
-$(function() {
-    $('#linkResume').mouseenter(function() {
-        $('#linkResume').addClass('animated shake');
-    });
-    
-    $('#linkResume').mouseleave(function() {
-        $('#linkResume').removeClass('animated shake');
-    });
-});
-
-// Smooth Scrolling
-$(function() {
-    $('a[href*="#"]:not([href="#"])').click(function() {
-        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
-            var target = $(this.hash);
-            target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-            if (target.length) {
-                $('html, body').animate({
-                    scrollTop: target.offset().top
-                }, 400);
-                return false;
-            }
-        }
-    });
-});
-
-// Tooltip hovering
-$(function(){
-    $('[data-toggle="tooltip"]').tooltip();
-});
-
-// Konami Code Sequence - Easter Egg :)
-var allowedKeys = {
-    37: 'left',
-    38: 'up',
-    39: 'right',
-    40: 'down',
-    65: 'a',
-    66: 'b'
 };
 
-var konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
+// ─── Border Flash (nav links) ─────────────────────────────────────────────────
+const flashElement = (el) => {
+    el.style.transition = 'opacity 0.4s';
+    el.style.opacity = '0';
+    setTimeout(() => {
+        el.style.opacity = '1';
+    }, 400);
+};
 
-var konamiCodePosition = 0;
+// ─── Resume Shake Animation ───────────────────────────────────────────────────
+const initResumeShake = () => {
+    const resumeLink = document.getElementById('linkResume');
+    resumeLink.addEventListener('mouseenter', () => resumeLink.classList.add('animated', 'shake'));
+    resumeLink.addEventListener('mouseleave', () =>
+        resumeLink.classList.remove('animated', 'shake'),
+    );
+};
 
-document.addEventListener('keydown', function(e) {
-    // get the value of the key code from the key map
-    var key = allowedKeys[e.keyCode];
+// ─── Smooth Scrolling ─────────────────────────────────────────────────────────
+const initSmoothScroll = () => {
+    document.querySelectorAll('a[href*="#"]:not([href="#"])').forEach((anchor) => {
+        anchor.addEventListener('click', (e) => {
+            const target = document.querySelector(anchor.hash);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+};
 
-    // get the value of the required key from the konami code
-    var requiredKey = konamiCode[konamiCodePosition];
+// ─── Bootstrap Tooltips ───────────────────────────────────────────────────────
+const initTooltips = () => {
+    $('[data-toggle="tooltip"]').tooltip();
+};
 
-    // compare the key with the required key
-    if (key == requiredKey) {
+// ─── Konami Code Easter Egg ───────────────────────────────────────────────────
+const initKonamiCode = () => {
+    const sequence = [
+        'ArrowUp',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'ArrowLeft',
+        'ArrowRight',
+        'b',
+        'a',
+    ];
+    let position = 0;
+    let inverted = false;
 
-        // move to the next key in the konami code sequence
-        konamiCodePosition++;
+    const toggleInvert = () => {
+        inverted = !inverted;
+        const style = document.createElement('style');
+        style.textContent = `html { filter: invert(${inverted ? '100%' : '0%'}); }`;
+        document.head.appendChild(style);
+    };
 
-        // if the last key is reached, activate cheats
-        if (konamiCodePosition == konamiCode.length)
-            activateCheats();
-    } else
-        konamiCodePosition = 0;
-});
+    document.addEventListener('keydown', ({ key }) => {
+        if (key === sequence[position]) {
+            position++;
+            if (position === sequence.length) {
+                toggleInvert();
+                position = 0;
+            }
+        } else {
+            position = 0;
+        }
+    });
+};
 
-function activateCheats() {
-    inverseColors();
-    konamiCodePosition = 0;
-}
+// ─── Nav Flash Handlers ───────────────────────────────────────────────────────
+const initNavFlash = () => {
+    document
+        .querySelector('a[href="#aboutMe"]')
+        ?.addEventListener('click', () =>
+            flashElement(document.getElementById('borderAboutMe')),
+        );
+    document
+        .querySelector('a[href="#contact"]')
+        ?.addEventListener('click', () => flashElement(document.getElementById('contact')));
+};
 
-function inverseColors() { 
-    var css = 'html {-webkit-filter: invert(100%);' +
-        '-moz-filter: invert(100%);' + 
-        '-o-filter: invert(100%);' + 
-        '-ms-filter: invert(100%); }',
-
-        head = document.getElementsByTagName('head')[0],
-        style = document.createElement('style');
-
-    if (!window.counter) { window.counter = 1;} else  { window.counter ++;
-                                                       if (window.counter % 2 == 0) { var css ='html {-webkit-filter: invert(0%); -moz-filter:    invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'}
-                                                      };
-
-    style.type = 'text/css';
-    if (style.styleSheet){
-        style.styleSheet.cssText = css;
-    } else {
-        style.appendChild(document.createTextNode(css));
-    }
-
-    head.appendChild(style);
-}
+// ─── Init ─────────────────────────────────────────────────────────────────────
+updateFooterYear();
+initTyped();
+initResumeShake();
+initSmoothScroll();
+initTooltips();
+initKonamiCode();
+initNavFlash();
