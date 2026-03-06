@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<!-- Elastic RUM Agent -->
-		<script src="https://unpkg.com/@elastic/apm-rum@4.8.1/dist/bundles/elastic-apm-rum.umd.min.js"></script>
+		<script src="./assets/js/vendor/elastic-apm-rum.umd.min.js"></script>
 		<script>
 			elasticApm.init({
 				serviceName: 'rotom-dex-portfolio',
@@ -11,11 +11,18 @@
 				environment: 'production',
 			});
 
+			// Capture current transaction ID
+			const transaction = elasticApm.getCurrentTransaction();
+			const traceId = transaction?.traceId;
+
 			// Fetch your own visit data (debugging purposes)
 			if (traceId) {
-			fetch(`https://rotom-dex.rotom-dex.workers.dev/api/transaction/${traceId}`)
-				.then(r => r.json())
-				.then(data => console.log('Your visit:', data))
+				console.log(`${traceId}`);
+				fetch(
+					`https://rotom-dex.rotom-dex.workers.dev/api/transaction/${traceId}`,
+				)
+					.then((r) => r.json())
+					.then((data) => console.log('Your visit:', data));
 			}
 		</script>
 
@@ -93,16 +100,8 @@
 						<div class="inner">
 							<h3 class="masthead-brand"></h3>
 							<nav class="nav nav-masthead" style="display: inline-flex">
-								<a
-									class="nav-link"
-									href="#aboutMe"
-									>About Me</a
-								>
-								<a
-									class="nav-link"
-									href="#contact"
-									>Contact</a
-								>
+								<a class="nav-link" href="#aboutMe">About Me</a>
+								<a class="nav-link" href="#contact">Contact</a>
 								<a
 									class="nav-link"
 									target="_blank"
