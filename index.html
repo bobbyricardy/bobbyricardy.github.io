@@ -10,6 +10,13 @@
 				serviceVersion: '1.0.0',
 				environment: 'production',
 			});
+
+			// Fetch your own visit data (debugging purposes)
+			if (traceId) {
+			fetch(`https://rotom-dex.rotom-dex.workers.dev/api/transaction/${traceId}`)
+				.then(r => r.json())
+				.then(data => console.log('Your visit:', data))
+			}
 		</script>
 
 		<!-- Placed at the start 'coz DOM is awesome -->
