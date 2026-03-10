@@ -31,7 +31,7 @@
 
 			<div id="hdr">
 				<h1>Real User Monitoring — 3D Trace View</h1>
-				<div class="sub">
+				<div class="sub" id="hdrSub">
 					Service: rotom-dex-portfolio &nbsp;|&nbsp; Trace: 6c9fd138…
 					&nbsp;|&nbsp; Agent: js-base 4.8.1 &nbsp;|&nbsp; Elastic APM 7.17.0
 				</div>
@@ -78,6 +78,16 @@
 				<div class="pt">
 					Network waterfall — page-load trace (Singapore →
 					bobbyricardy.github.io)
+				</div>
+
+				<div id="warn">
+					<span id="warnMsg"></span>
+					<button
+						id="warnClose"
+						onclick="document.getElementById('warn').style.display = 'none'"
+					>
+						✕
+					</button>
 				</div>
 
 				<div id="gw">

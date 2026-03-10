@@ -1,8 +1,13 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { fetchRumData, transformToGraph } from './rum-api.js';
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const GEO = { lat: 1.2939, lon: 103.8461 };
+
+// GCP VM API base URL — set to '' to always use demo data (backend not yet built)
+// Exposes two paths: /trace?id=<transactionId>  and  /latest-trace
+const API_BASE_URL = ''; // e.g. 'https://<gcp-vm-ip>/api/rum'
 // High-res NASA Blue Marble via three-globe's curated assets
 const TEX = {
   day: 'https://unpkg.com/three-globe@2.28.0/example/img/earth-blue-marble.jpg',
@@ -14,7 +19,7 @@ const TEX = {
 // Layout: nav chain occupies row 2, cols 1–5
 //         fan-out resources: col 6, rows 1–4
 //         font (triggered by gh): col 7, row 4
-const NODES = [
+let NODES = [
   {
     id: 'browser', label: 'Browser', sub: 'Chrome · js-base 4.8.1', type: 'browser',
     dur: null, start: null, gc: 1, gr: 2, nav: true,
@@ -82,7 +87,7 @@ const NODES = [
   },
 ];
 
-const EDGES = [
+let EDGES = [
   { f: 'browser', t: 'dns', dur: 32 },
   { f: 'dns', t: 'tcp', dur: 11 },
   { f: 'tcp', t: 'doc', dur: 247 },
@@ -472,8 +477,103 @@ function animate(t) {
   renderer.render(scene, camera);
 }
 
+// ── Data status indicator ─────────────────────────────────────────────────────
+/**
+ * Updates the panel subtitle to show live vs demo mode.
+ * Writes into the existing #fp .pt element — no new DOM or CSS required.
+ *
+ * @param {boolean} live - true if live API data was successfully loaded
+ */
+function setDataStatus(live) {
+  const pt = document.querySelector('#fp .pt');
+  if (!pt) return;
+  const badge = live
+    ? '<span style="color:#34d399;font-size:.58rem">● LIVE</span>'
+    : '<span style="color:#475569;font-size:.58rem">● DEMO</span>';
+  pt.innerHTML = `${badge} &nbsp;Network waterfall — page-load trace (Singapore → bobbyricardy.github.io)`;
+}
+
+/**
+ * Shows a dismissible warning banner inside #fp when the API was attempted
+ * but failed. Styled via #warn in rum.css.
+ *
+ * @param {string} msg - Warning message to display
+ */
+function showWarning(msg) {
+  const warn = document.getElementById('warn');
+  const warnMsg = document.getElementById('warnMsg');
+  if (!warn || !warnMsg) return;
+  warnMsg.textContent = msg;
+  warn.style.display = 'flex';
+}
+
+/**
+ * Updates the #hdrSub subtitle with the actual transaction ID from the URL,
+ * replacing the hardcoded placeholder.
+ *
+ * @param {string|null} tid - Transaction ID, or null to keep the demo placeholder
+ */
+function updateHdrTrace(tid) {
+  const sub = document.getElementById('hdrSub');
+  if (!sub) return;
+  const traceDisplay = tid ? `${tid.slice(0, 8)}…` : '6c9fd138…';
+  sub.innerHTML = `Service: rotom-dex-portfolio &nbsp;|&nbsp; Trace: ${traceDisplay} &nbsp;|&nbsp; Agent: js-base 4.8.1 &nbsp;|&nbsp; Elastic APM 7.17.0`;
+}
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
-updateUI();
-if (isMobile()) { buildMobile(); }
-else { buildDesktop(); buildAxis(); }
-animate(0);
+async function boot() {
+  updateUI();
+
+  const tid = new URLSearchParams(window.location.search).get('tid');
+  let isLive = false;
+  let apiFailed = false;
+
+  if (API_BASE_URL) {
+    // Tier 1: Fetch the specific transaction captured during the user's visit
+    if (tid) {
+      const apiData = await fetchRumData(`${API_BASE_URL}/trace?id=${tid}`);
+      const graph = apiData ? transformToGraph(apiData) : null;
+      if (graph) {
+        NODES = graph.nodes;
+        EDGES = graph.edges;
+        isLive = true;
+      } else {
+        apiFailed = true; // specific fetch failed — try latest as second fallback
+      }
+    }
+
+    // Tier 2: Fall back to the most recent known transaction
+    if (!isLive) {
+      const apiData = await fetchRumData(`${API_BASE_URL}/latest-trace`);
+      const graph = apiData ? transformToGraph(apiData) : null;
+      if (graph) {
+        NODES = graph.nodes;
+        EDGES = graph.edges;
+        isLive = true;
+        apiFailed = false; // recovered — no warning needed
+      }
+    }
+  }
+
+  // Tier 3: Static demo NODES/EDGES (unchanged from module initialisation)
+
+  updateHdrTrace(tid);
+  setDataStatus(isLive);
+
+  // Warn only when a specific tid was expected but both API tiers failed
+  if (apiFailed && !isLive) {
+    showWarning(
+      `Could not load trace ${tid?.slice(0, 8)}… — showing demo data. API may not be available yet.`,
+    );
+  }
+
+  if (isMobile()) {
+    buildMobile();
+  } else {
+    buildDesktop();
+    buildAxis();
+  }
+  animate(0);
+}
+
+boot();
