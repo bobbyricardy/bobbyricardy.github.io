@@ -109,6 +109,14 @@ const initNavFlash = () => {
         ?.addEventListener('click', () => flashElement(document.getElementById('contact')));
 };
 
+// ─── RUM Trace Link ───────────────────────────────────────────────────────────
+const initRumLink = () => {
+    const link = document.getElementById('linkRum');
+    if (!link) return;
+    const tid = window.elasticApm?.getCurrentTransaction()?.id;
+    if (tid) link.href = `./rum.html?tid=${tid}`;
+};
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 updateFooterYear();
 initTyped();
@@ -117,3 +125,4 @@ initSmoothScroll();
 initTooltips();
 initKonamiCode();
 initNavFlash();
+initRumLink();
