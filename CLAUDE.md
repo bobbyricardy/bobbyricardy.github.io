@@ -41,19 +41,23 @@ Pushing to the `master` branch triggers automatic GitHub Pages deployment. The s
 
 ### Pages
 
-- `index.html` — Main portfolio page (intro, nav, contact links, resume link)
+- `index.html` — Main portfolio page (intro, nav, contact links, resume link, lab dropdown)
 - `404.html` — Custom 404 error page
-- `rum.html` — Standalone RUM 3D trace visualization (not linked from main nav)
+- `lab/rum.html` — RUM 3D trace visualization, linked from the main nav as "Trace"
+
+### Lab
+
+The `lab/` folder holds standalone experiment and demo pages. Lab projects are listed in the "Lab" Bootstrap 4 dropdown in the masthead nav (styled via `#labDropdownWrap` rules in `custom_classes.css`). Every lab page should include a `#back` link pointing to `../index.html` for navigation.
 
 ### Key JavaScript
 
 - `assets/js/portfolio_enhancements.js` — All custom logic for the main page: footer year calculation, Typed.js animation, section fade effects, resume link shake animation, smooth scrolling, Bootstrap tooltips, and a Konami code easter egg that inverts page colors.
-- `assets/js/rum.js` — Three.js ES module powering the WebGL 3D trace view in `rum.html`. Uses an import map to load `three@0.162.0` from CDN.
+- `assets/js/rum.js` — Three.js ES module powering the WebGL 3D trace view in `lab/rum.html`. Uses an import map to load `three@0.162.0` from CDN.
 - `assets/js/typed.js` — Local copy of Typed.js used for the typewriter name animation in the masthead.
 
 ### Elastic APM RUM
 
-`index.html` loads the Elastic APM RUM agent (`@elastic/apm-rum@4.8.1`) and sends telemetry to `https://apm.bobbyricardy.dev` (a Cloudflare Worker proxy). The service is named `rotom-dex-portfolio`. The `rum.html` page visualizes this RUM data as a 3D network waterfall using Three.js.
+`index.html` loads the Elastic APM RUM agent (`@elastic/apm-rum@4.8.1`) and sends telemetry to `https://apm.bobbyricardy.dev` (a Cloudflare Worker proxy). The service is named `rotom-dex-portfolio`. The `lab/rum.html` page visualizes this RUM data as a 3D network waterfall using Three.js.
 
 ### Stylesheets
 

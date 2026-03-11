@@ -111,10 +111,15 @@ const initNavFlash = () => {
 
 // ─── RUM Trace Link ───────────────────────────────────────────────────────────
 const initRumLink = () => {
-    const link = document.getElementById('linkRum');
-    if (!link) return;
+    const labDropdownItems = document.querySelectorAll('#labDropdownWrap .dropdown-item');
     const tid = window.elasticApm?.getCurrentTransaction()?.id;
-    if (tid) link.href = `./rum.html?tid=${tid}`;
+    if (tid) {
+        labDropdownItems.forEach((item) => {
+            if (item.href.includes('rum.html')) {
+                item.href = `./lab/rum.html?tid=${tid}`;
+            }
+        });
+    }
 };
 
 // ─── Init ─────────────────────────────────────────────────────────────────────

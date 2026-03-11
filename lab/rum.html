@@ -4,7 +4,25 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>RUM Tracker — 3D Trace View</title>
-		<link rel="stylesheet" href="assets/css/rum.css" />
+		<link rel="stylesheet" href="../assets/css/rum.css" />
+
+		<link
+			rel="apple-touch-icon"
+			sizes="180x180"
+			href="../assets/apple-touch-icon.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href="../assets/favicon-32x32.png"
+			sizes="32x32"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href="../assets/favicon-16x16.png"
+			sizes="16x16">
+		/>
 	</head>
 
 	<body>
@@ -29,13 +47,15 @@
 				<div class="csub" id="utcv">UTC —</div>
 			</div>
 
-			<div id="hdr">
+		<div id="hdr">
 				<h1>Real User Monitoring — 3D Trace View</h1>
 				<div class="sub" id="hdrSub">
 					Service: rotom-dex-portfolio &nbsp;|&nbsp; Trace: 6c9fd138…
 					&nbsp;|&nbsp; Agent: js-base 4.8.1 &nbsp;|&nbsp; Elastic APM 7.17.0
 				</div>
 			</div>
+
+			<a id="back" href="../index.html">&#8592; Home</a>
 
 			<div id="leg" class="card">
 				<div class="clabel">Response time</div>
@@ -109,6 +129,6 @@
 				}
 			}
 		</script>
-		<script type="module" src="assets/js/rum.js"></script>
+		<script type="module" src="../assets/js/rum.js"></script>
 	</body>
 </html>

@@ -35,10 +35,33 @@
       display: grid;
       grid-template-columns: auto 1fr auto;
       grid-template-rows: auto auto auto 1fr auto;
-      grid-template-areas: "clk hdr ." "loc . ." "sol . ." ". . ." "fp fp leg";
+      grid-template-areas: "clk hdr back" "loc . ." "sol . ." ". . ." "fp fp leg";
       padding: 16px;
       gap: 10px;
       text-align: center
+    }
+
+    /* ── Back button ── */
+    #back {
+      grid-area: back;
+      align-self: start;
+      justify-self: end;
+      pointer-events: auto;
+      background: rgba(8, 14, 30, .9);
+      border: 1px solid rgba(96, 165, 250, .3);
+      border-radius: 12px;
+      padding: 8px 14px;
+      backdrop-filter: blur(18px);
+      font-size: .72rem;
+      color: #60a5fa;
+      text-decoration: none;
+      transition: transform .15s, box-shadow .15s, color .15s
+    }
+
+    #back:hover {
+      color: #a78bfa;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(96, 165, 250, .4)
     }
 
     /* ── Header ── */
@@ -417,11 +440,18 @@
 ═══════════════════════════════ */
     @media (max-width:768px) {
       #ov {
-        grid-template-columns: 1fr;
+        grid-template-columns: auto 1fr;
         grid-template-rows: auto auto auto auto auto 1fr auto;
-        grid-template-areas: "clk" "sol" "hdr" "leg" "loc" "." "fp";
+        grid-template-areas: "clk back" "sol sol" "hdr hdr" "leg leg" "loc loc" ". ." "fp fp";
         padding: 8px;
         gap: 8px
+      }
+
+      #back {
+        align-self: center;
+        justify-self: end;
+        border-radius: 9px;
+        padding: 7px 10px
       }
 
       #hdr h1 {
