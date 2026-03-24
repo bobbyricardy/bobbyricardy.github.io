@@ -44,6 +44,11 @@ const FETCH_TIMEOUT_MS = 5000;
  * @property {string} timestamp    - ISO-8601 capture time (@timestamp, converted from us)
  * @property {string} [clientIp]   - client.ip from the transaction document
  * @property {string} [userAgent]  - user_agent.original from the transaction document
+ * @property {{ lat: number, lon: number } | null} [geo] - Client geolocation from
+ *   Elasticsearch geo_point (client.geo.location); null when unavailable
+ * @property {string | null} [city]        - client.geo.city_name; null when unavailable
+ * @property {string | null} [country]     - client.geo.country_name; null when unavailable
+ * @property {string | null} [countryCode] - client.geo.country_iso_code (2-letter); null when unavailable
  */
 
 /**

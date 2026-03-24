@@ -3,11 +3,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { fetchRumData, transformToGraph } from './rum-api.js';
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GEO = { lat: 1.2939, lon: 103.8461 };
+let GEO = { lat: 0, lon: -160 }; // Pacific Ocean — updated after live geo loads
 
-// GCP VM API base URL — set to '' to always use demo data (backend not yet built)
-// Exposes two paths: /trace?id=<transactionId>  and  /latest-trace
-const API_BASE_URL = ''; // e.g. 'https://<gcp-vm-ip>/api/rum'
+// To test locally: open rum.html?api=http://localhost:8787/api/rum
+// Production: no ?api= param → empty string → demo data (unchanged behavior)
+const API_BASE_URL = new URLSearchParams(window.location.search).get('api') ?? '';
 // High-res NASA Blue Marble via three-globe's curated assets
 const TEX = {
   day: 'https://unpkg.com/three-globe@2.28.0/example/img/earth-blue-marble.jpg',
@@ -227,17 +227,18 @@ scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.018, 64, 64),
     transparent: true, side: THREE.BackSide, depthWrite: false
   })));
 
-// Singapore pin + pulse rings  (50% smaller, maroon)
-const MARKER_COLOR = 0xeb0400;
+// Location pin + pulse rings
+const MARKER_COLOR_LIVE = 0xeb0400;     // red — real visitor location
+const MARKER_COLOR_FALLBACK = 0x94a3b8; // grey — no geo available
 const sgV = ll2v(GEO.lat, GEO.lon);
-const pin = new THREE.Mesh(new THREE.SphereGeometry(.0065, 8, 8), new THREE.MeshBasicMaterial({ color: MARKER_COLOR }));
+const pin = new THREE.Mesh(new THREE.SphereGeometry(.0065, 8, 8), new THREE.MeshBasicMaterial({ color: MARKER_COLOR_FALLBACK }));
 pin.position.copy(sgV.clone().multiplyScalar(1.012));
 scene.add(pin);
 
 const rings = [];
 for (let i = 0; i < 3; i++) {
   const m = new THREE.Mesh(new THREE.RingGeometry(.008, .011, 32),
-    new THREE.MeshBasicMaterial({ color: MARKER_COLOR, transparent: true, opacity: .7, side: THREE.DoubleSide }));
+    new THREE.MeshBasicMaterial({ color: MARKER_COLOR_FALLBACK, transparent: true, opacity: .7, side: THREE.DoubleSide }));
   m.position.copy(pin.position); m.lookAt(0, 0, 0); m._ph = i * (Math.PI * 2 / 3);
   rings.push(m); scene.add(m);
 }
@@ -246,7 +247,7 @@ for (let i = 0; i < 3; i++) {
 const animDuration = 2800; // ms
 let animStartTime = null;
 const startPos = new THREE.Vector3(0, 1.5, 5); // Start further out
-const endPos = sgV.clone().multiplyScalar(2.3);
+const endPos = sgV.clone().multiplyScalar(2.3); // Updated to live geo if available
 
 controls.enabled = false; // Disable controls for intro animation
 camera.position.copy(startPos);
@@ -483,14 +484,53 @@ function animate(t) {
  * Writes into the existing #fp .pt element — no new DOM or CSS required.
  *
  * @param {boolean} live - true if live API data was successfully loaded
+ * @param {string|null} [city] - live city name for the subtitle origin label
  */
-function setDataStatus(live) {
+function setDataStatus(live, city = null) {
   const pt = document.querySelector('#fp .pt');
   if (!pt) return;
   const badge = live
-    ? '<span style="color:#34d399;font-size:.58rem">● LIVE</span>'
-    : '<span style="color:#475569;font-size:.58rem">● DEMO</span>';
-  pt.innerHTML = `${badge} &nbsp;Network waterfall — page-load trace (Singapore → bobbyricardy.github.io)`;
+    ? '<span class="status-badge live"><span class="dot"></span>LIVE</span>'
+    : '<span class="status-badge demo"><span class="dot"></span>DEMO</span>';
+  const origin = live && city ? city : 'Client';
+  pt.innerHTML = `${badge} &nbsp;Network waterfall — page-load trace (${origin} → bobbyricardy.github.io)`;
+}
+
+/**
+ * Formats a lat/lon pair into a human-readable coordinate string.
+ *
+ * @param {number} lat
+ * @param {number} lon
+ * @returns {string}
+ */
+function formatCoords(lat, lon) {
+  const latDir = lat >= 0 ? 'N' : 'S';
+  const lonDir = lon >= 0 ? 'E' : 'W';
+  return `${Math.abs(lat).toFixed(4)}° ${latDir}, ${Math.abs(lon).toFixed(4)}° ${lonDir}`;
+}
+
+/**
+ * Updates the #loc Client Location card from live API meta.
+ * Falls back to — placeholders when geo is unavailable.
+ *
+ * @param {import('./rum-api.js').RumApiMeta | null} meta
+ */
+function updateLocationPanel(meta) {
+  const label = document.getElementById('loc-label');
+  const ip = document.getElementById('loc-ip');
+  const coords = document.getElementById('loc-coords');
+  if (!label || !ip || !coords) return;
+
+  if (meta?.geo?.lat != null && meta?.geo?.lon != null) {
+    const place = [meta.city, meta.countryCode].filter(Boolean).join(', ') || meta.country || 'Unknown';
+    label.textContent = `📍 ${place}`;
+    ip.textContent = meta.clientIp ?? '—';
+    coords.textContent = formatCoords(meta.geo.lat, meta.geo.lon);
+  } else {
+    label.textContent = '📍 —';
+    ip.textContent = '—';
+    coords.textContent = '—';
+  }
 }
 
 /**
@@ -508,16 +548,20 @@ function showWarning(msg) {
 }
 
 /**
- * Updates the #hdrSub subtitle with the actual transaction ID from the URL,
- * replacing the hardcoded placeholder.
+ * Updates the #hdrSub subtitle from live API meta.
+ * All fields default to — when meta is null (demo mode).
  *
- * @param {string|null} tid - Transaction ID, or null to keep the demo placeholder
+ * @param {import('./rum-api.js').RumApiMeta | null} meta
+ * @param {string|null} tid - transaction ID from URL param (overrides meta.traceId display)
  */
-function updateHdrTrace(tid) {
+function updateHdrTrace(meta, tid) {
   const sub = document.getElementById('hdrSub');
   if (!sub) return;
-  const traceDisplay = tid ? `${tid.slice(0, 8)}…` : '6c9fd138…';
-  sub.innerHTML = `Service: rotom-dex-portfolio &nbsp;|&nbsp; Trace: ${traceDisplay} &nbsp;|&nbsp; Agent: js-base 4.8.1 &nbsp;|&nbsp; Elastic APM 7.17.0`;
+  const service = meta?.service ?? '—';
+  const traceId = tid ?? meta?.traceId;
+  const trace = traceId ? `${traceId.slice(0, 8)}…` : '—';
+  const agent = meta?.agentVersion ? `js-base ${meta.agentVersion}` : '—';
+  sub.innerHTML = `Service: ${service} &nbsp;|&nbsp; Trace: ${trace} &nbsp;|&nbsp; Agent: ${agent} &nbsp;`;
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
@@ -527,16 +571,17 @@ async function boot() {
   const tid = new URLSearchParams(window.location.search).get('tid');
   let isLive = false;
   let apiFailed = false;
+  let liveApiData = null;
 
   if (API_BASE_URL) {
     // Tier 1: Fetch the specific transaction captured during the user's visit
     if (tid) {
       const apiData = await fetchRumData(`${API_BASE_URL}/trace?id=${tid}`);
-      const graph = apiData ? transformToGraph(apiData) : null;
-      if (graph) {
-        NODES = graph.nodes;
-        EDGES = graph.edges;
-        isLive = true;
+      if (apiData) {
+        liveApiData = apiData;
+        isLive = true; // API connected — badge reflects connectivity, not graph transform
+        const graph = transformToGraph(apiData);
+        if (graph) { NODES = graph.nodes; EDGES = graph.edges; }
       } else {
         apiFailed = true; // specific fetch failed — try latest as second fallback
       }
@@ -545,20 +590,36 @@ async function boot() {
     // Tier 2: Fall back to the most recent known transaction
     if (!isLive) {
       const apiData = await fetchRumData(`${API_BASE_URL}/latest-trace`);
-      const graph = apiData ? transformToGraph(apiData) : null;
-      if (graph) {
-        NODES = graph.nodes;
-        EDGES = graph.edges;
+      if (apiData) {
+        liveApiData = apiData;
         isLive = true;
         apiFailed = false; // recovered — no warning needed
+        const graph = transformToGraph(apiData);
+        if (graph) { NODES = graph.nodes; EDGES = graph.edges; }
       }
     }
   }
 
   // Tier 3: Static demo NODES/EDGES (unchanged from module initialisation)
 
-  updateHdrTrace(tid);
-  setDataStatus(isLive);
+  // Update marker position and color if live geo is available
+  const liveGeo = liveApiData?.meta?.geo;
+  if (liveGeo?.lat != null && liveGeo?.lon != null) {
+    GEO = { lat: liveGeo.lat, lon: liveGeo.lon };
+    const v = ll2v(GEO.lat, GEO.lon);
+    pin.position.copy(v.clone().multiplyScalar(1.012));
+    pin.material.color.setHex(MARKER_COLOR_LIVE);
+    rings.forEach(r => {
+      r.position.copy(pin.position);
+      r.lookAt(0, 0, 0);
+      r.material.color.setHex(MARKER_COLOR_LIVE);
+    });
+    endPos.copy(v.multiplyScalar(2.3));
+  }
+
+  updateLocationPanel(liveApiData?.meta ?? null);
+  updateHdrTrace(liveApiData?.meta ?? null, tid);
+  setDataStatus(isLive, liveApiData?.meta?.city ?? null);
 
   // Warn only when a specific tid was expected but both API tiers failed
   if (apiFailed && !isLive) {
@@ -573,7 +634,7 @@ async function boot() {
     buildDesktop();
     buildAxis();
   }
-  animate(0);
+  requestAnimationFrame(animate);
 }
 
 boot();
