@@ -10,14 +10,6 @@
 				serviceVersion: '1.0.0',
 				environment: 'production',
 			});
-
-			// Capture current transaction ID
-			const transaction = elasticApm.getCurrentTransaction();
-			const transactionId = transaction?.id;
-
-			if (transactionId) {
-				console.log(`transactionId: ${transactionId}`);
-			}
 		</script>
 
 		<!-- Placed at the start 'coz DOM is awesome -->

@@ -552,14 +552,12 @@ function showWarning(msg) {
  * All fields default to — when meta is null (demo mode).
  *
  * @param {import('./rum-api.js').RumApiMeta | null} meta
- * @param {string|null} tid - transaction ID from URL param (overrides meta.traceId display)
  */
-function updateHdrTrace(meta, tid) {
+function updateHdrTrace(meta) {
   const sub = document.getElementById('hdrSub');
   if (!sub) return;
   const service = meta?.service ?? '—';
-  const traceId = tid ?? meta?.traceId;
-  const trace = traceId ? `${traceId.slice(0, 8)}…` : '—';
+  const trace = meta?.traceId ? `${meta.traceId.slice(0, 8)}…` : '—';
   const agent = meta?.agentVersion ? `js-base ${meta.agentVersion}` : '—';
   sub.innerHTML = `Service: ${service} &nbsp;|&nbsp; Trace: ${trace} &nbsp;|&nbsp; Agent: ${agent} &nbsp;`;
 }
@@ -568,39 +566,20 @@ function updateHdrTrace(meta, tid) {
 async function boot() {
   updateUI();
 
-  const tid = new URLSearchParams(window.location.search).get('tid');
   let isLive = false;
-  let apiFailed = false;
   let liveApiData = null;
 
   if (API_BASE_URL) {
-    // Tier 1: Fetch the specific transaction captured during the user's visit
-    if (tid) {
-      const apiData = await fetchRumData(`${API_BASE_URL}/trace?id=${tid}`);
-      if (apiData) {
-        liveApiData = apiData;
-        isLive = true; // API connected — badge reflects connectivity, not graph transform
-        const graph = transformToGraph(apiData);
-        if (graph) { NODES = graph.nodes; EDGES = graph.edges; }
-      } else {
-        apiFailed = true; // specific fetch failed — try latest as second fallback
-      }
-    }
-
-    // Tier 2: Fall back to the most recent known transaction
-    if (!isLive) {
-      const apiData = await fetchRumData(`${API_BASE_URL}/latest-trace`);
-      if (apiData) {
-        liveApiData = apiData;
-        isLive = true;
-        apiFailed = false; // recovered — no warning needed
-        const graph = transformToGraph(apiData);
-        if (graph) { NODES = graph.nodes; EDGES = graph.edges; }
-      }
+    const apiData = await fetchRumData(`${API_BASE_URL}/latest-trace`);
+    if (apiData) {
+      liveApiData = apiData;
+      isLive = true;
+      const graph = transformToGraph(apiData);
+      if (graph) { NODES = graph.nodes; EDGES = graph.edges; }
     }
   }
 
-  // Tier 3: Static demo NODES/EDGES (unchanged from module initialisation)
+  // Fallback: NODES/EDGES remain static demo data when isLive is false
 
   // Update marker position and color if live geo is available
   const liveGeo = liveApiData?.meta?.geo;
@@ -618,14 +597,11 @@ async function boot() {
   }
 
   updateLocationPanel(liveApiData?.meta ?? null);
-  updateHdrTrace(liveApiData?.meta ?? null, tid);
+  updateHdrTrace(liveApiData?.meta ?? null);
   setDataStatus(isLive, liveApiData?.meta?.city ?? null);
 
-  // Warn only when a specific tid was expected but both API tiers failed
-  if (apiFailed && !isLive) {
-    showWarning(
-      `Could not load trace ${tid?.slice(0, 8)}… — showing demo data. API may not be available yet.`,
-    );
+  if (API_BASE_URL && !isLive) {
+    showWarning('Could not load latest trace — showing demo data. API may not be available.');
   }
 
   if (isMobile()) {
