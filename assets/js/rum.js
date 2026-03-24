@@ -7,7 +7,7 @@ let GEO = { lat: 0, lon: -160 }; // Pacific Ocean — updated after live geo loa
 
 // To test locally: open rum.html?api=http://localhost:8787/api/rum
 // Production: no ?api= param → empty string → demo data (unchanged behavior)
-const API_BASE_URL = new URLSearchParams(window.location.search).get('api') ?? '';
+const API_BASE_URL = new URLSearchParams(window.location.search).get('api') ?? 'https://apm.bobbyricardy.dev/api/rum';
 // High-res NASA Blue Marble via three-globe's curated assets
 const TEX = {
   day: 'https://unpkg.com/three-globe@2.28.0/example/img/earth-blue-marble.jpg',
