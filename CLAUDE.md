@@ -57,7 +57,7 @@ The `lab/` folder holds standalone experiment and demo pages. Lab projects are l
 
 ### Elastic APM RUM
 
-`index.html` loads the Elastic APM RUM agent (`@elastic/apm-rum@4.8.1`) and sends telemetry to `https://apm.bobbyricardy.dev` (a Cloudflare Worker proxy). The service is named `rotom-dex-portfolio`. The `lab/rum.html` page visualizes this RUM data as a 3D network waterfall using Three.js.
+`index.html` loads the Elastic APM RUM agent (`@elastic/apm-rum@4.8.1`) and sends telemetry to `https://rotom-dex.rotom-dex.workers.dev` (a Cloudflare Worker). The service is named `rotom-dex-portfolio`. The `lab/rum.html` page visualizes this RUM data as a 3D network waterfall using Three.js. The RUM API base is `https://rotom-dex.rotom-dex.workers.dev/api/rum` — overridable locally via `?api=http://localhost:8787/api/rum`.
 
 ### Stylesheets
 
