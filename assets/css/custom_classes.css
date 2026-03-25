@@ -34,6 +34,7 @@ h6 {
 
 #linkResume {
   color: #FFFFFF;
+  margin-left: 0.3rem;
 }
 
 #peace {
@@ -106,4 +107,56 @@ h6 {
 
 #infoMessage {
     font-size: 0.8rem;
+}
+
+/* ── Lab nav dropdown ── */
+#labDropdownWrap {
+    margin-left: 1rem;
+}
+
+#labDropdownWrap .dropdown-toggle::after {
+    display: none;
+}
+
+#labDropdownWrap .fa-chevron-down {
+    font-size: 0.6rem;
+    vertical-align: middle;
+    transition: transform 0.15s ease;
+}
+
+#labDropdownWrap .dropdown-toggle[aria-expanded='true'] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+#labDropdownWrap .dropdown-menu {
+    background-color: #333;
+    border: 1px solid transparent;
+    min-width: 0;
+    padding: 4px;
+}
+
+#labDropdownWrap .dropdown-menu.show {
+    animation: labDropdownIn 0.15s ease forwards;
+}
+
+@keyframes labDropdownIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#labDropdownWrap .dropdown-item {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+#labDropdownWrap .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }

@@ -1,0 +1,5 @@
+assets/
+*.min.*
+*bootstrap.*
+CLAUDE.md
+dist/
