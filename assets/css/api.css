@@ -1,0 +1,284 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    background: #333;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+.page {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+#back {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 1.5rem;
+}
+
+#back:hover {
+    color: #fff;
+}
+
+/* ── Swagger UI dark overrides ── */
+
+.swagger-ui .topbar {
+    display: none;
+}
+
+/* Force base text color — this cascades to most children */
+.swagger-ui {
+    color: #fff !important;
+}
+
+/* Main backgrounds */
+.swagger-ui .wrapper,
+.swagger-ui .opblock-tag-section {
+    background: transparent !important;
+}
+
+.swagger-ui .scheme-container {
+    background: rgba(0, 0, 0, 0.25) !important;
+    box-shadow: none !important;
+    padding: 12px 0;
+}
+
+/* Info block */
+.swagger-ui .info .title,
+.swagger-ui .info p,
+.swagger-ui .info li,
+.swagger-ui .info a,
+.swagger-ui .info code,
+.swagger-ui .info .base-url {
+    color: #fff !important;
+}
+
+.swagger-ui .info .base-url,
+.swagger-ui .info code {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.swagger-ui .info code {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Servers dropdown */
+.swagger-ui .schemes > label span,
+.swagger-ui label {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.swagger-ui select {
+    background: rgba(0, 0, 0, 0.35) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Tag section headers */
+.swagger-ui .opblock-tag {
+    color: #fff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.swagger-ui .opblock-tag small {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.swagger-ui .opblock-tag:hover {
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Operation blocks — preserve method accent colors */
+.swagger-ui .opblock {
+    box-shadow: none !important;
+    border-radius: 6px !important;
+}
+
+.swagger-ui .opblock.opblock-get {
+    background: rgba(97, 175, 254, 0.07) !important;
+    border-color: #61affe !important;
+}
+
+.swagger-ui .opblock.opblock-post {
+    background: rgba(73, 204, 144, 0.07) !important;
+    border-color: #49cc90 !important;
+}
+
+.swagger-ui .opblock.opblock-put {
+    background: rgba(252, 161, 48, 0.07) !important;
+    border-color: #fca130 !important;
+}
+
+.swagger-ui .opblock.opblock-delete {
+    background: rgba(249, 62, 62, 0.07) !important;
+    border-color: #f93e3e !important;
+}
+
+.swagger-ui .opblock .opblock-summary {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.swagger-ui .opblock .opblock-summary-description,
+.swagger-ui .opblock .opblock-summary-path,
+.swagger-ui .opblock .opblock-summary-path__deprecated {
+    color: #fff !important;
+}
+
+/* Expanded body */
+.swagger-ui .opblock-body,
+.swagger-ui .opblock-section-header {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.swagger-ui .opblock-section-header h4,
+.swagger-ui .opblock-description-wrapper p,
+.swagger-ui .opblock-external-docs-wrapper p,
+.swagger-ui .opblock-title_normal p {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Parameters */
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__deprecated,
+.swagger-ui .parameter__in,
+.swagger-ui .parameters-col_description p {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Tables */
+.swagger-ui table thead tr td,
+.swagger-ui table thead tr th {
+    color: rgba(255, 255, 255, 0.5) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.swagger-ui .response-col_status,
+.swagger-ui .response-col_description p {
+    color: #fff !important;
+}
+
+/* Code / response body */
+.swagger-ui .microlight,
+.swagger-ui .highlight-code,
+.swagger-ui .highlight-code > .microlight,
+.swagger-ui .opblock-body pre.microlight {
+    background: rgba(0, 0, 0, 0.4) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 4px !important;
+}
+
+/* Models / schemas */
+.swagger-ui section.models {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px !important;
+}
+
+.swagger-ui section.models h4 {
+    color: #fff !important;
+    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.swagger-ui section.models .model-container {
+    background: rgba(0, 0, 0, 0.15) !important;
+}
+
+.swagger-ui .model-box {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.swagger-ui .model,
+.swagger-ui .model span,
+.swagger-ui .prop-type,
+.swagger-ui .prop-format {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Inputs */
+.swagger-ui input[type="text"],
+.swagger-ui input[type="password"],
+.swagger-ui input[type="search"],
+.swagger-ui input[type="email"],
+.swagger-ui textarea {
+    background: rgba(0, 0, 0, 0.3) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Buttons */
+.swagger-ui .btn {
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.swagger-ui .btn.execute {
+    background: #61affe !important;
+    border-color: #61affe !important;
+    color: #fff !important;
+}
+
+.swagger-ui .btn.cancel {
+    background: transparent !important;
+    border-color: #f93e3e !important;
+    color: #f93e3e !important;
+}
+
+/* SVG arrows */
+.swagger-ui .expand-operation svg,
+.swagger-ui svg.arrow {
+    fill: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Live response section labels (Curl, Request URL, Server response, Responses) */
+.swagger-ui .curl-command h4,
+.swagger-ui .request-url h4,
+.swagger-ui .live-responses-wrap h4,
+.swagger-ui .responses-inner h4,
+.swagger-ui .responses-wrapper h4,
+.swagger-ui .opblock-body h4 {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Response table column headers (Code, Description, Links) */
+.swagger-ui .col_header {
+    color: rgba(255, 255, 255, 0.55) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* "No links" / "Add links" text */
+.swagger-ui .response-col_links {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* "Undocumented" label */
+.swagger-ui .response-undocumented {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* "Media type" label */
+.swagger-ui .response-control-media-type__title,
+.swagger-ui .content-type-wrapper > label {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* "Controls Accept header." small text */
+.swagger-ui .response-control-media-type small,
+.swagger-ui .content-type-wrapper small {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
