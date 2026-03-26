@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Service Status</title>
+		<link rel="stylesheet" href="../assets/css/status.css" />
+
+		<link
+			rel="apple-touch-icon"
+			sizes="180x180"
+			href="../assets/apple-touch-icon.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href="../assets/favicon-32x32.png"
+			sizes="32x32"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href="../assets/favicon-16x16.png"
+			sizes="16x16"
+		/>
+	</head>
+
+	<body>
+		<div class="page">
+			<a id="back" href="../">&#8592; Home</a>
+
+			<div class="header">
+				<div>
+					<div class="title">Service Status</div>
+					<div class="subtitle" id="checked-at">checking...</div>
+				</div>
+				<div class="overall-badge badge-operational" id="overall-badge">
+					<div class="dot dot-gray" id="overall-dot"></div>
+					<span id="overall-text">loading</span>
+				</div>
+			</div>
+
+			<div class="metrics-grid">
+				<div class="metric-card">
+					<div class="metric-label">
+						<span class="emoji">✅</span> Uptime (approx)
+					</div>
+					<div class="metric-value" id="uptime">—</div>
+					<div class="metric-sub">all services</div>
+				</div>
+				<div class="metric-card">
+					<div class="metric-label">
+						<span class="emoji">⚡</span> Page load p95
+					</div>
+					<div class="metric-value" id="p95">—</div>
+					<div class="metric-sub">last 30 days</div>
+				</div>
+				<div class="metric-card">
+					<div class="metric-label">
+						<span class="emoji">🕐</span> Last event
+					</div>
+					<div class="metric-value" id="last-event">—</div>
+					<div class="metric-sub">ago</div>
+				</div>
+			</div>
+
+			<div class="section-label">
+				<span class="emoji">📡</span> Availability
+			</div>
+			<div class="sli-card">
+				<div class="sli-row">
+					<div class="dot" id="dot-apm"></div>
+					<div style="flex: 1">
+						<div class="sli-name">APM Server</div>
+						<div class="sli-desc">apm.bobbyricardy.dev</div>
+					</div>
+					<div class="status-pill pill-ok" id="pill-apm">—</div>
+				</div>
+				<div class="sli-row">
+					<div class="dot" id="dot-es"></div>
+					<div style="flex: 1">
+						<div class="sli-name">
+							<span class="emoji">🔍</span> Elasticsearch
+						</div>
+						<div class="sli-desc" id="desc-es">cluster health</div>
+					</div>
+					<div class="status-pill pill-ok" id="pill-es">—</div>
+				</div>
+				<div class="sli-row">
+					<div class="dot dot-green" id="dot-worker"></div>
+					<div style="flex: 1">
+						<div class="sli-name">
+							<span class="emoji">☁️</span> Cloudflare Worker
+						</div>
+						<div class="sli-desc">rotom-dex.rotom-dex.workers.dev</div>
+					</div>
+					<div class="status-pill pill-ok">operational</div>
+				</div>
+			</div>
+
+			<div class="section-label"><span class="emoji">⚡</span> Latency</div>
+			<div class="sli-card">
+				<div class="sli-row">
+					<div class="dot" id="dot-p95"></div>
+					<div style="flex: 1">
+						<div class="sli-name">Page load p95</div>
+						<div class="sli-desc">transaction duration, last 30 days</div>
+					</div>
+					<div class="sli-value" id="val-p95">—</div>
+					<div class="status-pill" id="pill-p95">—</div>
+				</div>
+			</div>
+
+			<div class="section-label">
+				<span class="emoji">🕐</span> Data freshness
+			</div>
+			<div class="sli-card">
+				<div class="sli-row">
+					<div class="dot" id="dot-fresh"></div>
+					<div style="flex: 1">
+						<div class="sli-name">Last RUM event</div>
+						<div class="sli-desc">most recent transaction indexed</div>
+					</div>
+					<div class="sli-value" id="val-fresh">—</div>
+					<div class="status-pill" id="pill-fresh">—</div>
+				</div>
+			</div>
+			<div class="section-label">
+				<span class="emoji">📊</span> 30-day uptime history
+			</div>
+			<div class="heatmap-wrap">
+				<div class="heatmap-service-row">
+					<div class="heatmap-service-label">APM Server</div>
+					<div class="heatmap-grid" id="heatmap-apm"></div>
+				</div>
+				<div class="heatmap-service-row">
+					<div class="heatmap-service-label">Elasticsearch</div>
+					<div class="heatmap-grid" id="heatmap-es"></div>
+				</div>
+				<div class="heatmap-service-row">
+					<div class="heatmap-service-label">Overall</div>
+					<div class="heatmap-grid" id="heatmap-overall"></div>
+				</div>
+				<div class="heatmap-legend">
+					<div class="legend-cell cell-green"></div>
+					<div class="heatmap-legend-label">100%</div>
+					<div class="legend-cell cell-amber" style="margin-left: 8px"></div>
+					<div class="heatmap-legend-label">degraded</div>
+					<div class="legend-cell cell-red" style="margin-left: 8px"></div>
+					<div class="heatmap-legend-label">outage</div>
+					<div class="legend-cell cell-empty" style="margin-left: 8px"></div>
+					<div class="heatmap-legend-label">no data</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../assets/js/status.js"></script>
+	</body>
+</html>
