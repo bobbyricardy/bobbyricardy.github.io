@@ -11,7 +11,6 @@ const updateFooterYear = () => {
 const initTyped = () => {
     Typed.new('.masthead-brand', {
         strings: [
-            'testing123',
             'Bobby',
             'Bob Ricardy <i id="peace" class="fa fa-hand-peace-o fa-lg"></i>',
         ],
